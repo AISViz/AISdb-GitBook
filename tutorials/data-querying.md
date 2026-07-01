@@ -1,0 +1,264 @@
+# 🔎 Data Querying
+
+Data querying with **AISdb** involves setting up a connection to the database, defining query parameters, creating and executing the query, and processing the results. Following the previous tutorial, [_Database Loading_](database-loading.md), we set up a database connection and made simple queries and visualizations. This tutorial will dig into data query functions and parameters and show you the queries you can make with AISdb.
+
+## Query functions
+
+Data querying with AISdb includes two components: `DBQuery` and `TrackGen`.  In this section, we will introduce each component with examples. Before starting data querying, please ensure you have connected to the database. If you have not done so, please follow the instructions and examples in [_Database Loading_](database-loading.md#id-2.-load-ais-data-into-a-database) or [_Quick Start_](../default-start/quick-start.md#database-handling).&#x20;
+
+### Query database
+
+The [`DBQuery`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.dbqry.html) class is used to <mark style="background-color:yellow;">**create a query object**</mark> that specifies the parameters for data retrieval, including the time range, spatial domain, and any filtering callbacks. Here is an example to create a DBQuery object and use parameters to specify the time range and geographical locations:
+
+{% code lineNumbers="true" %}
+```python
+from aisdb.database.dbqry import DBQuery
+
+# Specify database path
+dbpath = ...
+
+# Specify constraints (optional)
+start_time = ...
+end_time = ...
+domain = ...
+
+# Create a query object to fetch data within time and geographical range
+qry = DBQuery(
+    dbconn=dbconn,                  # Database connection object
+    start=start_time,               # Start time for the query
+    end=end_time,                   # End time for the query
+    xmin=domain.boundary['xmin'],   # Minimum longitude of the domain
+    xmax=domain.boundary['xmax'],   # Maximum longitude of the domain
+    ymin=domain.boundary['ymin'],   # Minimum latitude of the domain
+    ymax=domain.boundary['ymax'],   # Maximum latitude of the domain
+    callback=aisdb.database.sqlfcn_callbacks.in_time_bbox_validmmsi  # Callback function to filter data
+)
+```
+{% endcode %}
+
+#### Callback functions
+
+Callback functions are used in the [`DBQuery`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.dbqry.html) class to filter data based on specific criteria. Some common callbacks include: `in_bbox`, `in_time_bbox`, `valid_mmsi`, and `in_time_bbox_validmmsi`. These callbacks ensure that the data retrieved matches the specific criteria defined in the query. Please find examples of using different callbacks with other parameters in [_Query types with practical examples_](data-querying.md#query-types-with-practical-examples).
+
+For more callback functions, refer to the API documentation here: [API-Doc](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.sqlfcn_callbacks.html)
+
+#### Method `gen_qry`
+
+The function [`gen_qry`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.dbqry.html#aisdb.database.dbqry.DBQuery.gen_qry) is a method of the [`DBQuery`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.dbqry.html) class in AISdb. It is responsible for generating rows of data that match the query criteria specified when creating the `DBQuery` object. This function acts as a generator, yielding one row at a time and efficiently handling large datasets.
+
+**Two** callback **functions can be passed to gen\_qry. They are:**
+
+* `crawl_dynamic` :  Iterates only over the position reports table. By default this is called.
+* `crawl_dynamic_static`: Iterates over both position reports and static messages tables.
+
+After creating the `DBQuery` object, we can generate rows with `gen_qry` :
+
+{% code lineNumbers="true" %}
+```python
+# Generate rows from the query
+rowgen = qry.gen_qry(fcn=sqlfcn.crawl_dynamic_static) # callback parameter is optional
+
+# Process the generated rows as needed
+for row in rowgen:
+    print(row)
+```
+{% endcode %}
+
+Each row from `gen_qry` is a tuple or dictionary representing a record in the database.
+
+### Generate trajectories
+
+The [`TrackGen`](https://aisdb.meridian.cs.dal.ca/doc/api/aisdb.track_gen.html#aisdb.track_gen.TrackGen) class <mark style="background-color:yellow;">**converts the generated rows**</mark> <mark style="background-color:yellow;"></mark><mark style="background-color:yellow;">from</mark> <mark style="background-color:yellow;"></mark><mark style="background-color:yellow;">`gen_qry`</mark> <mark style="background-color:yellow;">**into tracks (trajectories)**</mark>. It takes the row generator and, optionally, a `decimate` parameter to control point reduction. This conversion is essential for analyzing vessel movements, identifying patterns, and visualizing trajectories in later steps.
+
+Following the generated rows above, here is how to use the `TrackGen` class:
+
+{% code lineNumbers="true" %}
+```python
+from aisdb.track_gen import TrackGen
+
+# Convert the generated rows into tracks
+tracks = TrackGen(rowgen, decimate=False)
+```
+{% endcode %}
+
+The `TrackGen` class yields "tracks," which is a generator object. While iterating over tracks, each component is a dictionary representing a track for a specific vessel:
+
+{% code lineNumbers="true" %}
+```python
+for track in tracks:
+    mmsi = track['mmsi']
+    lons = track['lon']
+    lats = track['lat']
+    speeds = track['sog']
+    
+    print(f"Track for vessel MMSI {mmsi}:")
+    for lon, lat, speed in zip(lons[:3], lats[:3], speeds[:3]):
+        print(f" - Lon: {lon}, Lat: {lat}, Speed: {speed}")
+    break  # Exit after the first track
+```
+{% endcode %}
+
+This is the output with our sample data:
+
+{% code lineNumbers="true" %}
+```
+Track for vessel MMSI 316004240:
+ - Lon: -63.54868698120117, Lat: 44.61691665649414, Speed: 7.199999809265137
+ - Lon: -63.54880905151367, Lat: 44.61708450317383, Speed: 7.099999904632568
+ - Lon: -63.55659866333008, Lat: 44.626953125, Speed: 1.5
+```
+{% endcode %}
+
+## Query types with practical examples
+
+In this section, we will provide practical examples of the most common querying types you can make using the `DBQuery` class, including querying within a time range, geographical areas, and tracking vessels by MMSI. Different queries can be achieved by changing the [`callbacks`](https://aisdb.meridian.cs.dal.ca/doc/api/aisdb.database.sqlfcn_callbacks.html#module-aisdb.database.sqlfcn_callbacks) parameters and other parameters defined in the `DBQuery` class. Then, we will use `TrackGen` to convert these query results into structured tracks for further analysis and visualization.
+
+First, we need to import the necessary packages and prepare data:
+
+{% code lineNumbers="true" %}
+```python
+import os
+import aisdb
+from datetime import datetime, timedelta
+from aisdb import DBConn, DBQuery, DomainFromPoints
+
+dbpath='YOUR_DATABASE.db' # Define the path to your database
+```
+{% endcode %}
+
+### Within time range
+
+Querying data within a specified time range can be done by using the [`in_timerange_validmmsi`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.sqlfcn_callbacks.html#aisdb.database.sqlfcn_callbacks.in_timerange_validmmsi) callback in the `DBQuery` class:
+
+{% code lineNumbers="true" %}
+```python
+start_time = datetime.strptime("2018-01-01 00:00:00", '%Y-%m-%d %H:%M:%S')
+end_time = datetime.strptime("2018-01-02 00:00:00", '%Y-%m-%d %H:%M:%S')
+
+with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
+    qry = aisdb.DBQuery(
+        dbconn=dbconn, start=start_time, end=end_time,
+        callback=aisdb.database.sqlfcn_callbacks.in_timerange_validmmsi,
+    )
+    rowgen = qry.gen_qry()
+    
+    # Convert queried rows to vessel trajectories
+    tracks = aisdb.track_gen.TrackGen(rowgen, decimate=False)
+    
+    # Visualization
+    aisdb.web_interface.visualize(
+        tracks,
+        domain=domain,
+        visualearth=True,
+        open_browser=True,
+    )
+```
+{% endcode %}
+
+This will display the queried vessel tracks (within a time range, has a valid MMSI) on the map:
+
+<figure><img src="../.gitbook/assets/Screenshot from 2024-08-07 14-12-48.png" alt=""><figcaption><p>Queried vessel tracks in specified time range</p></figcaption></figure>
+
+You may find noise in some of the track data. In [_Data Cleaning_](data-cleaning.md), we introduced the de-noising methods in AISdb that can effectively remove unreasonable or error data points, ensuring more accurate and reliable vessel trajectories.
+
+### Within bounding box
+
+In practical scenarios, people may have specific points/areas of interest. `DBQuery` includes parameters to define a bounding box and has relevant callbacks. Let's look at an example:
+
+{% code lineNumbers="true" %}
+```python
+domain = DomainFromPoints(points=[(-63.6, 44.6)], radial_distances=[50000]) # a circle with a 100km radius around the location point
+
+with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
+    qry = aisdb.DBQuery(
+        dbconn=dbconn, start=start_time, end=end_time,
+        xmin=domain.boundary['xmin'], xmax=domain.boundary['xmax'],
+        ymin=domain.boundary['ymin'], ymax=domain.boundary['ymax'],
+        callback=aisdb.database.sqlfcn_callbacks.in_validmmsi_bbox,
+    )
+    rowgen = qry.gen_qry()
+    tracks = aisdb.track_gen.TrackGen(rowgen, decimate=False)
+    
+    aisdb.web_interface.visualize(
+        tracks,
+        domain=domain,
+        visualearth=True,
+        open_browser=True,
+    )
+```
+{% endcode %}
+
+This will show all the vessel tracks with valid MMSI in the defined bounding box:
+
+<figure><img src="../.gitbook/assets/Screenshot from 2024-08-07 14-43-34.png" alt=""><figcaption><p>Queried vessel tracks within a defined bounding box</p></figcaption></figure>
+
+### Combination of multiple conditions
+
+In the above examples, we queried data in a time range and a geographical area. If you want to combine multiple query criteria, please check out available [types of callbacks](https://aisdb.meridian.cs.dal.ca/doc/api/aisdb.database.sqlfcn_callbacks.html#module-aisdb.database.sqlfcn_callbacks) in the API Docs. In the last example above, we can simply modify the callback type to obtain vessel tracks within both the time range and geographical area:
+
+{% code lineNumbers="true" %}
+```python
+callback=aisdb.database.sqlfcn_callbacks.in_time_bbox_validmmsi
+```
+{% endcode %}
+
+The displayed vessel tracks:
+
+<figure><img src="../.gitbook/assets/Screenshot from 2024-08-07 14-58-47.png" alt=""><figcaption><p>Queried vessel tracks within a defined bounding box and time range</p></figcaption></figure>
+
+### Filtering MMSI
+
+In addition to time and location range, you can track single and multiple vessel(s) of interest by specifying their MMSI in the query. Here is an example of tracking several vessels within a time range:
+
+{% code lineNumbers="true" %}
+```python
+import random
+
+def assign_colors(mmsi_list):
+    colors = {}
+    for mmsi in mmsi_list:
+        colors[mmsi] = "#{:06x}".format(random.randint(0, 0xFFFFFF))  # Random color in hex
+    return colors
+
+# Create a function to color tracks
+def color_tracks(tracks, colors):
+    colored_tracks = []
+    for track in tracks:
+        mmsi = track['mmsi']
+        color = colors.get(mmsi, "#000000")  # Default to black if no color assigned
+        track['color'] = color
+        colored_tracks.append(track)
+    return colored_tracks
+
+# Set the start and end times for the query
+start_time = datetime.strptime("2018-01-01 00:00:00", '%Y-%m-%d %H:%M:%S')
+end_time = datetime.strptime("2018-12-31 00:00:00", '%Y-%m-%d %H:%M:%S')
+
+# Create a list of vessel MMSIs you want to track 
+MMSI = [636017611,636018124,636018253]
+
+# Assign colors to each MMSI
+colors = assign_colors(MMSI)
+
+with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
+    qry = aisdb.DBQuery(
+        dbconn=dbconn, start=start_time, end=end_time, mmsis = MMSI,
+        callback=aisdb.database.sqlfcn_callbacks.in_timerange_inmmsi,
+    )
+    rowgen = qry.gen_qry()
+    
+    tracks = aisdb.track_gen.TrackGen(rowgen, decimate=False)
+    colored_tracks = color_tracks(tracks, colors)
+
+    # Visualizing the tracks
+    aisdb.web_interface.visualize(
+        colored_tracks,
+        visualearth=True,
+        open_browser=True,
+    )
+```
+{% endcode %}
+
+<figure><img src="../.gitbook/assets/Screenshot from 2024-08-07 15-43-47.png" alt=""><figcaption><p>Queried tracks of vessels of interest within a specified time range</p></figcaption></figure>
+
+&#x20;
