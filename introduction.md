@@ -27,21 +27,13 @@ layout:
     visible: true
 ---
 
-# ⚓ Introduction
+# Introduction
 
 ## Overview
 
 Welcome to [AISdb](https://github.com/AISViz/AISdb), a comprehensive gateway for [Automatic Identification System (AIS)](https://en.wikipedia.org/wiki/Automatic_identification_system) data use and applications. AISdb is part of the [Making Maritime Informatics Accessible to Everyone (AISViz)](https://github.com/AISViz) project, developed and maintained by the [MAPS Lab](https://mapslab.tech/) at [Dalhousie University](https://www.dal.ca/) and building on earlier work from the [MERIDIAN](https://meridian.cs.dal.ca/) initiative. It is designed to streamline the collection, processing, and analysis of AIS data, both in live-streaming scenarios and through historical records.
 
-<table data-view="cards">
-  <thead><tr><th></th><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead>
-  <tbody>
-    <tr><td><strong>Quick Start</strong></td><td>Install AISdb and run your first query on local data.</td><td><a href="default-start/quick-start.md">default-start/quick-start.md</a></td></tr>
-    <tr><td><strong>Docker Start</strong></td><td>Spin up AISdb in a container without a manual install.</td><td><a href="docker-start/quick-start.md">docker-start/quick-start.md</a></td></tr>
-    <tr><td><strong>Tutorials</strong></td><td>Load AIS data into a database and start exploring it.</td><td><a href="tutorials/database-loading.md">tutorials/database-loading.md</a></td></tr>
-    <tr><td><strong>Machine Learning</strong></td><td>Cluster vessel behavior with scikit-learn on AIS data.</td><td><a href="machine-learning/clustering-with-scikit-learn.md">machine-learning/clustering-with-scikit-learn.md</a></td></tr>
-  </tbody>
-</table>
+<table data-card-size="large" data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><strong>Quick Start</strong></td><td>Install AISdb and run your first query on local data.</td><td><a href="default-start/quick-start.md">quick-start.md</a></td></tr><tr><td><strong>Docker Start</strong></td><td>Spin up AISdb in a container without a manual install.</td><td><a href="docker-start/quick-start.md">quick-start.md</a></td></tr><tr><td><strong>Tutorials</strong></td><td>Load AIS data into a database and start exploring it.</td><td><a href="tutorials/database-loading.md">database-loading.md</a></td></tr><tr><td><strong>Machine Learning</strong></td><td>Cluster vessel behavior with scikit-learn on AIS data.</td><td><a href="machine-learning/clustering-with-scikit-learn.md">clustering-with-scikit-learn.md</a></td></tr></tbody></table>
 
 The primary features AISdb provides include the following.
 
