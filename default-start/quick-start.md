@@ -6,7 +6,7 @@ cover: >-
 coverY: 0
 ---
 
-# 🛰️ Quick Start
+# Quick Start
 
 ### If you are new to AIS topics, [click here](../tutorials/automatic-identification-system.md) to learn about the Automatic Identification System (AIS).
 
@@ -43,7 +43,7 @@ pip install aisdb
 {% endtabs %}
 
 {% hint style="info" %}
-PyPI carries the latest stable line of AISdb. The 1.8.0-alpha release that this documentation targets is published on [GitHub](https://github.com/MAPS-Lab/AISdb/releases/tag/1.8.0-alpha) and installs from source. If you need the features introduced in 1.8.0-alpha, such as weather integration, NOAA CSV ingestion, and TimescaleDB support, follow the [Compile AISdb](compile-aisdb.md) guide or run `pip install git+https://github.com/MAPS-Lab/AISdb.git` with a Rust toolchain installed. The core workflow shown in this guide works the same on both.
+PyPI carries the latest stable line of AISdb. The 1.8.0-alpha release that this documentation targets is published on [GitHub](https://github.com/MAPS-Lab/AISdb/releases/tag/1.8.0-alpha) and installs from source. If you need the features introduced in 1.8.0-alpha, such as weather integration, NOAA CSV ingestion, and TimescaleDB support, follow the [Compile AISdb](/broken/pages/kEZqZ6cULQ3RW0d0Hl4a) guide or run `pip install git+https://github.com/MAPS-Lab/AISdb.git` with a Rust toolchain installed. The core workflow shown in this guide works the same on both.
 {% endhint %}
 
 You can test your installation by running the following commands:
@@ -60,7 +60,7 @@ If you are running [Jupyter](https://jupyter.org/), ensure it is installed in th
 <strong>jupyter notebook
 </strong></code></pre>
 
-The Python code in the rest of this document can be run in the Python environment you created.&#x20;
+The Python code in the rest of this document can be run in the Python environment you created.
 
 #### Development Installation
 
@@ -70,8 +70,8 @@ To use _<mark style="background-color:red;">nightly builds</mark>_ <mark style="
 </strong>
 <strong># Cloning the Repository and installing the package
 </strong>git clone https://github.com/MAPS-Lab/AISdb.git &#x26;&#x26; cd AISdb
-<strong>
-</strong># Windows users can instead download the installer:
+
+# Windows users can instead download the installer:
 <strong>#   - https://forge.rust-lang.org/infra/other-installation-methods.html#rustup
 </strong>#   - https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe
 <strong>curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > install-rust.sh
@@ -86,8 +86,7 @@ To use _<mark style="background-color:red;">nightly builds</mark>_ <mark style="
 
 Alternatively, you can use _<mark style="background-color:red;">nightly builds</mark>_ <mark style="background-color:red;">**(not mandatory)**</mark> on **Google Colab** as follows:
 
-{% code title="colab_setup.py" %}
-<pre class="language-python" data-line-numbers><code class="lang-python"><strong>import os
+<pre class="language-python" data-title="colab_setup.py" data-line-numbers><code class="lang-python"><strong>import os
 </strong># Clone the AISdb repository from GitHub
 <strong>!git clone https://github.com/MAPS-Lab/AISdb.git
 </strong># Install Rust using the official Rustup script
@@ -107,7 +106,6 @@ Alternatively, you can use _<mark style="background-color:red;">nightly builds</
 </strong># Build and install the AISdb package using Maturin
 <strong>!maturin develop --release --extras=test,docs
 </strong></code></pre>
-{% endcode %}
 
 ### Database Handling
 
@@ -161,8 +159,8 @@ This uses `psycopg`, which installs automatically with `pip install aisdb`, so t
 </strong>    password='PASSWORD',  # Replace this with your password
 <strong>    dbname='DATABASE',  # Replace this with your database name
 </strong>)
-<strong>
-</strong># [OPTION 2]
+
+# [OPTION 2]
 <strong>dbconn = PostgresDBConn('postgresql://USERNAME:PASSWORD@HOST:PORT/DATABASE')
 </strong></code></pre>
 
@@ -176,7 +174,7 @@ Querying SQLite is as easy as providing the name of a <mark style="background-co
 </strong>dbconn = SQLiteDBConn(dbpath=dbpath)
 </code></pre>
 
-If you want to create <mark style="background-color:yellow;">your database using your data</mark>, we have a [tutorial](../tutorials/using-your-ais-data.md) with examples that show you how to create an SQLite database from open-source data.&#x20;
+If you want to create <mark style="background-color:yellow;">your database using your data</mark>, we have a [tutorial](../tutorials/using-your-ais-data.md) with examples that show you how to create an SQLite database from open-source data.
 
 ### Querying the Database
 
@@ -188,25 +186,25 @@ The following query will return vessel trajectories from a given 1-hour time win
 </strong>import pandas as pd
 <strong>from datetime import datetime
 </strong>from collections import defaultdict
-<strong>
-</strong>dbpath = 'example_data.db'
+
+dbpath = 'example_data.db'
 <strong>start_time = datetime.strptime("2022-01-01 00:00:00", '%Y-%m-%d %H:%M:%S')
 </strong>end_time = datetime.strptime("2022-01-01 0:59:59", '%Y-%m-%d %H:%M:%S')
-<strong>
-</strong>def data2frame(tracks):
+
+def data2frame(tracks):
 <strong>    # Dictionary where for key/value
 </strong>    ais_data = defaultdict(lambda: pd.DataFrame(
         columns = ['time', 'lat', 'lon', 'cog', 'rocog', 'sog', 'delta_sog']))
-<strong>
-</strong>    for track in tracks:
+
+    for track in tracks:
 <strong>        mmsi = track['mmsi']
 </strong>        df = pd.DataFrame({
 <strong>            'time': pd.to_datetime(track['time'], unit='s'),
 </strong>            'lat': track['lat'], 'lon': track['lon'],
 <strong>            'cog': track['cog'], 'sog': track['sog']
 </strong>        })
-<strong>
-</strong>        # Sort by time in descending order
+
+        # Sort by time in descending order
 <strong>        df = df.sort_values(by='time', ascending=False).reset_index(drop=True)
 </strong>        # Compute the time difference in seconds
 <strong>        df['time_diff'] = df['time'].diff().dt.total_seconds()
@@ -242,8 +240,8 @@ A specific region can be queried for AIS data using [`aisdb.gis.Domain`](https:/
 
 <pre class="language-python" data-line-numbers><code class="lang-python"><strong># a circle with a 100km radius around the location point
 </strong>domain = aisdb.DomainFromPoints(points=[(-69.34, 41.55)], radial_distances=[100000])
-<strong>
-</strong>with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
+
+with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
 <strong>    qry = aisdb.DBQuery(
 </strong>        dbconn=dbconn, start=start_time, end=end_time,
 <strong>        xmin=domain.boundary['xmin'], xmax=domain.boundary['xmax'],
@@ -271,8 +269,8 @@ The above generator can be input into a processing function, yielding modified r
 </strong>
 <strong># Define a maximum time interval
 </strong>maxdelta = timedelta(hours=24)
-<strong>
-</strong>with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
+
+with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
 <strong>    qry = aisdb.DBQuery(
 </strong>        dbconn=dbconn, start=start_time, end=end_time,
 <strong>        xmin=domain.boundary['xmin'], xmax=domain.boundary['xmax'],
@@ -281,8 +279,8 @@ The above generator can be input into a processing function, yielding modified r
 </strong>    )
 <strong>    rowgen = qry.gen_qry()
 </strong>    tracks = aisdb.track_gen.TrackGen(rowgen, decimate=False)
-<strong>
-</strong>    # Split the generated tracks into segments
+
+    # Split the generated tracks into segments
 <strong>    track_segments = aisdb.split_timedelta(tracks, maxdelta)
 </strong>    ais_data = data2frame(track_segments)  # re-use previous function
 <strong>    
@@ -333,8 +331,8 @@ Building on the above processing pipeline, the resulting cleaned trajectories ca
 
 <pre class="language-python" data-line-numbers><code class="lang-python"><strong># Define a domain with a central point and corresponding radial distances
 </strong>domain = aisdb.DomainFromPoints(points=[(-69.34, 41.55),], radial_distances=[100000,])
-<strong>
-</strong># Filter the encoded tracks to those inside the domain polygons
+
+# Filter the encoded tracks to those inside the domain polygons
 <strong>tracks_filtered = aisdb.track_gen.fence_tracks(tracks_encoded, domain)
 </strong>
 <strong># Interpolate the filtered tracks with a specified time interval
@@ -360,12 +358,12 @@ To determine the approximate ocean depth at each vessel position, the [`aisdb.we
 
 <pre class="language-python" data-line-numbers><code class="lang-python"><strong>import os
 </strong>import aisdb
-<strong>
-</strong># Set the data storage directory (Gebco expects it to already exist)
+
+# Set the data storage directory (Gebco expects it to already exist)
 <strong>data_dir = './testdata/'
 </strong>os.makedirs(data_dir, exist_ok=True)
-<strong>
-</strong># Gebco() downloads the GEBCO bathymetry grid on first use if it is
+
+# Gebco() downloads the GEBCO bathymetry grid on first use if it is
 <strong># not already present in data_dir
 </strong>bathy = aisdb.webdata.bathymetry.Gebco(data_dir=data_dir)
 </code></pre>
@@ -384,8 +382,8 @@ Similarly, arbitrary coordinate-gridded raster data may be appended to vessel tr
 
 <pre class="language-python" data-line-numbers><code class="lang-python"><strong>tracks = aisdb.TrackGen(qry.gen_qry(), decimate=False)
 </strong>raster_path = './GMT_intermediate_coast_distance_01d.tif'
-<strong>
-</strong># Load the raster file
+
+# Load the raster file
 <strong>raster = aisdb.webdata.load_raster.RasterFile(raster_path)
 </strong>
 <strong># Merge the generated tracks with the raster data
@@ -394,7 +392,7 @@ Similarly, arbitrary coordinate-gridded raster data may be appended to vessel tr
 
 ### Visualization
 
-AIS data from the database may be overlaid on a map such as the one shown below using the [`aisdb.web_interface.visualize()`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.web_interface.html#aisdb.web_interface.visualize) function. This function accepts a generator of track dictionaries such as those output by [`aisdb.track_gen.TrackGen()`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.track_gen.html#aisdb.track_gen.TrackGen).&#x20;
+AIS data from the database may be overlaid on a map such as the one shown below using the [`aisdb.web_interface.visualize()`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.web_interface.html#aisdb.web_interface.visualize) function. This function accepts a generator of track dictionaries such as those output by [`aisdb.track_gen.TrackGen()`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.track_gen.html#aisdb.track_gen.TrackGen).
 
 <pre class="language-python" data-line-numbers><code class="lang-python"><strong>from datetime import datetime, timedelta
 </strong>import aisdb

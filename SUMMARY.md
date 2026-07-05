@@ -7,12 +7,6 @@
 * [Quick Start](default-start/quick-start.md)
 * [SQL Database](default-start/sql-database.md)
 * [AIS Hardware](default-start/ais-hardware.md)
-* [Compile AISdb](default-start/compile-aisdb.md)
-
-## Docker Start
-
-* [Quick Start](docker-start/quick-start.md)
-* [Detailed Start](docker-start/detailed-start.md)
 
 ## Tutorials
 
