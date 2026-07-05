@@ -14,7 +14,7 @@ _If you are starting from scratch, download the example ".db" file from our_ [_A
 
 ### Python Environment and Installation
 
-To work with the AISdb Python package, please ensure you have Python version 3.8 or higher. If you plan to use SQLite, no additional installation is required, as it is included with Python by default. Those who prefer using a PostgreSQL server must install it separately and can optionally enable the TimescaleDB extension for better performance on large time-series ingests.
+To work with the AISdb Python package, please ensure you have Python version 3.10 or higher. If you plan to use SQLite, no additional installation is required, as it is included with Python by default. Those who prefer using a PostgreSQL server must install it separately and can optionally enable the TimescaleDB extension for better performance on large time-series ingests.
 
 #### User Installation
 
@@ -24,8 +24,8 @@ The AISdb Python package can be conveniently installed using pip. <mark style="b
 {% tab title="Linux" icon="linux" %}
 {% code title="install.sh" %}
 ```bash
-python -m venv AISdb   # create a python virtual environment
-source ./AISdb/bin/activate  # activate the virtual environment
+python -m venv .venv   # create a python virtual environment
+source ./.venv/bin/activate  # activate the virtual environment
 pip install aisdb  # from https://pypi.org/project/aisdb/
 ```
 {% endcode %}
@@ -34,7 +34,7 @@ pip install aisdb  # from https://pypi.org/project/aisdb/
 {% tab title="Windows" icon="windows" %}
 {% code title="install.ps1" %}
 ```bash
-python -m venv AISdb
+python -m venv .venv
 ./AISdb/Scripts/activate
 pip install aisdb
 ```
@@ -50,12 +50,12 @@ You can test your installation by running the following commands:
 
 <pre class="language-python" data-line-numbers><code class="lang-python"><strong>python
 </strong>>>> import aisdb
-<strong>>>> aisdb.__version__  # '1.8.0-alpha' when built from source, or the latest PyPI release
+<strong>>>> aisdb.__version__  # '1.8.0a0' when built from source, or the latest PyPI release
 </strong></code></pre>
 
 If you are running [Jupyter](https://jupyter.org/), ensure it is installed in the same environment as AISdb:
 
-<pre class="language-bash" data-line-numbers><code class="lang-bash"><strong>source ./AISdb/bin/activate
+<pre class="language-bash" data-line-numbers><code class="lang-bash"><strong>source ./.venv/bin/activate
 </strong>pip install jupyter
 <strong>jupyter notebook
 </strong></code></pre>
@@ -66,7 +66,7 @@ The Python code in the rest of this document can be run in the Python environmen
 
 To use _<mark style="background-color:red;">nightly builds</mark>_ <mark style="background-color:red;">**(not mandatory)**</mark>, you can install AISdb from source:
 
-<pre class="language-bash" data-line-numbers><code class="lang-bash"><strong>source AISdb/bin/activate  # On Windows use `AISdb\Scripts\activate`
+<pre class="language-bash" data-line-numbers><code class="lang-bash"><strong>source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
 </strong>
 <strong># Cloning the Repository and installing the package
 </strong>git clone https://github.com/MAPS-Lab/AISdb.git &#x26;&#x26; cd AISdb

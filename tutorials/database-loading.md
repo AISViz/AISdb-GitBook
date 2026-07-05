@@ -15,15 +15,15 @@ Preparing a Python virtual environment for AISdb is a good practice. It allows y
 
 {% code title="Linux" lineNumbers="true" %}
 ```bash
-python -m venv AISdb         # create a python virtual environment
-source ./AISdb/bin/activate  # activate the virtual environment
+python -m venv .venv         # create a python virtual environment
+source ./.venv/bin/activate  # activate the virtual environment
 pip install aisdb            # from https://pypi.org/project/aisdb/
 ```
 {% endcode %}
 
 {% code title="Windows" lineNumbers="true" %}
 ```sh
-python -m venv AISdb         # create a virtual environment
+python -m venv .venv         # create a virtual environment
 ./AISdb/Scripts/activate     # activate the virtual environment
 pip install aisdb            # install the AISdb package using pip
 ```
@@ -35,7 +35,7 @@ Now you can check your installation by running:
 ```bash
 $ python
 >>> import aisdb
->>> aisdb.__version__        # '1.8.0-alpha' when built from source, or the latest PyPI release
+>>> aisdb.__version__        # '1.8.0a0' when built from source, or the latest PyPI release
 ```
 {% endcode %}
 

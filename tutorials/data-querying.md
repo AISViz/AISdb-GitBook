@@ -46,7 +46,7 @@ with aisdb.SQLiteDBConn(dbpath=dbpath) as dbconn:
 
 #### Callback functions
 
-Callback functions are used in the [`DBQuery`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.dbqry.html) class to filter data based on specific criteria. Some common callbacks include `in_validmmsi_bbox`, `in_time_bbox`, `valid_mmsi`, and `in_time_bbox_validmmsi`. These callbacks ensure that the data retrieved matches the specific criteria defined in the query. Please find examples of using different callbacks with other parameters in [_Query types with practical examples_](data-querying.md#query-types-with-practical-examples).
+Callback functions are used in the [`DBQuery`](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.dbqry.html) class to filter data based on specific criteria. Some common callbacks include `in_validmmsi_bbox`, `in_time_bbox`, `in_timerange_validmmsi`, and `in_time_bbox_validmmsi`. These callbacks ensure that the data retrieved matches the specific criteria defined in the query. Please find examples of using different callbacks with other parameters in [_Query types with practical examples_](data-querying.md#query-types-with-practical-examples).
 
 For more callback functions, refer to the API documentation here: [API-Doc](https://aisviz.cs.dal.ca/AISdb/api/aisdb.database.sqlfcn_callbacks.html)
 

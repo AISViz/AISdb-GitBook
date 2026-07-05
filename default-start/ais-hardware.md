@@ -79,7 +79,7 @@ AISdb's receiver is a Rust component exposed to Python as `aisdb.start_receiver(
 
 ### Install AISdb
 
-On the Raspberry Pi (or whatever Linux box the receiver is plugged into), install Python 3.8 or newer and pull AISdb from PyPI.
+On the Raspberry Pi (or whatever Linux box the receiver is plugged into), install Python 3.10 or newer and pull AISdb from PyPI.
 
 {% code lineNumbers="true" %}
 ```bash
