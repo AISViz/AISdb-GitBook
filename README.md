@@ -36,6 +36,21 @@ Edit the relevant Markdown file, keep the GitBook front matter and the hint or f
 - [NOAA-Integrator](https://github.com/MAPS-Lab/NOAA-Integrator) acquires and processes Marine Cadastre AIS data into an AISdb-aligned database.
 - [AISdb-Tutorials](https://github.com/MAPS-Lab/AISdb-Tutorials) holds hands-on Jupyter notebooks that walk through AISdb, from database loading to bathymetry.
 
+## Citation
+
+If you use the AISdb documentation in your work, please cite it. Citation metadata lives in [CITATION.cff](CITATION.cff), and the BibTeX entry follows.
+
+```bibtex
+@software{AISdbGitBook2026:GSpadon,
+  author    = {Spadon, Gabriel},
+  title     = {AISdb Documentation},
+  year      = {2026},
+  publisher = {MAPS Lab, Dalhousie University},
+  url       = {https://github.com/MAPS-Lab/AISdb-GitBook},
+  license   = {AGPL-3.0}
+}
+```
+
 ## License
 
 This documentation is distributed under the terms of the GNU Affero General Public License v3.0 (AGPL-3.0). See [LICENSE](LICENSE) for details. It is maintained by the [MAPS Lab](https://mapslab.tech/) at Dalhousie University, in collaboration with the [Maritime Risk and Safety (MARS)](https://www.maritimeriskandsafety.ca/) group, building on earlier work from the MERIDIAN initiative. Reach the maintainers at [mapslab@dal.ca](mailto:mapslab@dal.ca).
